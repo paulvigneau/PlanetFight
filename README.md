@@ -1,62 +1,58 @@
 # Planet Fight
 
-## Présentation du projet
+## Presentation
 
-> Ce projet a été réalisé lors de la troisième année de Licence Informatique à l'Université de Bordeaux. Il a été développé par Paul Vigneau et Nicolas Desclaux.
+This project has been developed during the 3rd year of Bachelor at the University of Bordeaux, France by [Paul Vigneau](https://github.com/paulvigneau) and [Nicolas Desclaux](https://github.com/Ndesclaux).
 
-Ce jeu est réalisé en java 1.8 avec la bibliothèque graphique JavaFX. Il se compose de plusieurs classes :  
-- Game : La classe principale du projet. C'est ici qu'est géré l'affichage ainsi que le déroulement du jeu.
-- Universe : Cette classe correspond à l'univers. Il va regrouper tous les éléments présent dans l'espace ainsi qu'une partie de la gestion du jeu.
-- Planet : Tout le traitement autour d'une planète (initialisation, changement d'état, production de vaisseaux...) se fait ici.
-- Ship : Chaque vaisseau est un objet de la classe Ship. Sa création, le calcul du chemin qu'il doit emprunter, sa destruction, etc sont définis dans cette classe.
-- Squadron : Les vaisseaux sont envoyés par escadron (groupes de vaisseaux). Pour cela, la classe Squadron contient une liste des vaisseaux qui composent un escadron.
-- Player : Il s'agit d'un joueur. Il peut être commandé par une personne jouant au jeu ou par l'ordinateur avec un Intelligence Artificielle.
-  
-## Principe du jeu
+This program is coded in Java 1.8 and uses the JavaFX library.
 
-Une partie se compose d'un univers. Dans cet univers sont présents plusieurs éléments : 
-- Différentes planètes positionnées aléatoirement. Chaque joueur dispose au départ d'une planète source différenciable des autres par sa couleur. Les autres planètes (non contrôlées par un joueur) sont dites neutres.
-- Seules les planètes appartenant à un joueur peuvent produire des vaisseaux, les autres ont un stock qui ne leur sert qu'à se défendre.
-- Des vaisseaux de différents types qui partent d'une planète source et qui arrivent à une planète destination. Ces vaisseaux sont envoyés par chaque joueurs en fonction des réserves des planètes qu'il commande. Les vaisseaux  partent donc d'une planète et arrivent à une autre.
-- Des zones libres pour laisser passer les vaisseaux.
+## Rules
 
-Un vaisseau arrivant à destination peut avoir différentes conséquences. Si la planète sur laquelle il arrive appartient au même joueur que sa source, alors il s'agit d'un déplacement de troupes et le nombre de vaisseau de la planète est incrémenté. Si la planète est à un autre joueur, il s'agit d'une attaque kamikaze et le nombre de vaisseau de la planète destination est décrémenté.  
-Si une planète se fait attaquer et que son nombre de vaisseau devient nul, la planète est alors conquise par le joueur attaquant. 
-Le but du jeu est donc de conquérir toutes les planètes ennemies afin d'être le seul joueur à en posséder.
+The game begins with a Universe composed of several planets. One planet is controlled by the player, some planets by an AI (depending of the parameters of the game) and the other planets are neutrals. The goal is to control all the opponents planets by sending a percentage of one's ships to other planets.
 
-## Fonctionnalités du jeu
+## Functionalities
 
-A la création de l'univers, plusieurs choses se passent.  
-Tout d'abord, les joueurs sont créés avec une couleur qui les caractérisent les uns des autres.  
-Ensuite, les planètes sont générées.
-- Leur position, leur taille ainsi que leur nombre de vaisseaux sont créés aléatoirement. Cas particulier : chaque planète attribuée au commencement de la partie à un joueur contient 100 vaisseaux.
-- Chaque joueur possède une seule planète au début de la partie.
+- Planets:
+  - Each planet has a random size, position and number of ships.
+  - Controlled planets are colored with the player/AI's color and the neutral ones are grey. Main player's color is **blue**.
+  - Controlled planets begin the game with 100 ships.
+  - A planet can send a percentage of its ships to another planet.
+  - If a planet received allied ships, its ships count increases with the squadron size.
+  - If a planet received opponent ships, its ships count decreases with the squadron size.
+  - When been attacked, if the ships count of a planet becomes negative, the opponent is the new owner of the planet.
+  - The number of ships of controlled planets is increased by 1 every second. Neutral planets don't increase.
+  - A planet can be sick, its ship production is not constant.
+- Ships:
+  - A ship can only be launched from a planet and its destination is a planet too.
+  - When a ship reaches its target, it disappears.
+  - A ship has a speed, force, production cost and shape. There are three types of ships.
+  - A ship has a destination that can change during its flight.
+  - A ship goes to its destination without touching other planets.
+- Artificial Intelligence:
+  - The AI pattern is simple, le "player" takes a decision randomly between 4 choices:
+    1. Attack the planet with the lower number of ships.
+    2. Attack an opponent's planet that can be owned and send the exact number of ships.
+    3. Attack a neutral planet and sent the exact number of ships.
+    4. Attack/rescue a random planet.
+- Save/Load:
+  - There is a "save" button in the right panel to save game. There is also a "restore" button to load the previously saved game.
+  - The save is located in the file `./save.ser`
+- Parameters
+  - There is a side panel at the right of the screen that permit to manage some parameters of the game.
+  - There is a slider to select what percentage of ships the player want to send.
+  - There is a part that indicates the type of ships that is selected with details.
+  - Two buttons "-" and "+" to decrease or increase the number of players (AI) in the game. Can be from 2 to 10 (the default number of planets but can be changed in the code).
+  - The buttons "save" and "restore".
 
-Une fois l'univers créé est affiché, il est maintenant possible de jouer. La couleur du seul joueur humain est le bleu, et ça pour chaque partie.  
+## Controls
 
-Il est possible d'envoyer un escadron de vaisseaux vers une autre planète. Pour cela, il suffit de cliquer sur la planète source (qui est contrôlée par le joueur en question) et de relâcher le clic sur la planète destination. Plusieurs vaisseaux sont donc créés tout autour de la planète et partent en direction de leur destination en prenant bien soin d'éviter les planètes sur leur chemin. Le nombre de vaisseaux envoyé dépend du pourcentage choisi (0-100).  
-En effet un slider est présent sur le coté de la fenêtre de jeu et permet au joueur de choisir un pourcentage de vaisseaux à envoyer en fonction de la quantité que détient la planète. La valeur de ce slider peut être changée avec la souris, avec la molette ou encore avec les touches HAUT et BAS du clavier.  
+- Drag and drop from one of your planet to another planet to send a percentage of ships.
+- Click on some of your planets with the CTRL key down to select multi planets. Drag and drop from any of them to send ships from the selection.
+- Up and down arrows, slider in side panel or mouse wheel can increase/decrease the percentage of ships to send.
+- Use the mouse wheel + CTRL key down to select a squadron that is flying (the selected squadron is highlighted). Click on a planet to change the target of the squadron.
+- Use the digit keys to choose the ship type (from 1 to 3).
 
-Il existe 3 types de vaisseaux. Ces vaisseaux se différencient par leur forme, leur prix, leur puissance d'attaque ainsi que leur vitesse. Il est possible de changer de type à l'aide des touches de chiffres du clavier. Un descriptif des caractéristiques du type est fait sur la partie droite de la fenêtre, en dessous du slider.
+## Possible improvements
 
-Chaque seconde du jeu, toutes les planètes exceptées les neutres incrémentent de 1 leur quantité de vaisseau. Il est possible qu'une planète soit malade, et dans ce cas, sa production de vaisseau n'est pas constante.  
-
-Lorsqu'un vaisseau part de sa planète mère, la quantité de cette dernière est décrémentée du prix du vaisseau.  
-
-Lorsqu'un escadron est envoyé et tant que tous les vaisseax n'ont pas atteint leur destination, il est possible de rediriger ce dernier et de lui donner une autre planète cible.  
-Pour cela, il faut maintenir le bouton CTRL enfoncé et à l'aide de la molette, on peut sélectionner l'escadron souhaité parmi ceux encore en présents. En gardant la touche CTRL enfoncée, on clique maintenant sur la nouvelle planète (qui peut être la planète mère) et la destination des vaisseaux encore présents dans l'escadron sera changée.  
-
-Il est possible de changer rapidement le nombre de joueur d'une partie. Par defaut son nombre est de 2 (un humain et un ordinateur) mais des boutons "+" et "-" sont situé dans la partie option du jeu et permettent de d'ajouter ou de supprimer un joueur. Cela a aussi pour effet de relancer une nouvelle partie pour des questions d'égalité entre les joueurs.  
-Le nombre de joueurs est compris entre 2 et le nombre de planètes
-
-Dans un espace sur le coté de la fenêtre, en dessous du slider, se trouve un bouton "sauvegarder" qui permet l'enregistrement de la partie en cours.  
-Il y a aussi un bouton "Charger" ayant pour rôle de rétablir une sauvegarde.  
-
-Une partie se joue avec un joueur humain et des joueurs contrôlés par l'ordinateur.  
-Nous avons donc mis en place une Intelligence Artificielle très naïve dans un premier temps permettant à un joueur non humain de sélectionner une de ses planètes et d'envoyer 50% de ses troupes sur une autre planète au hasard (exceptée la source). Un envoie est effectué par seconde uniquement si la planète choisie contient plus de 20 vaisseaux.
-
-## Améliorations possibles
-
-Voici une liste des améliorations envisageables pour la version améliorée :
-- Ajout d'images et de textures pour rendre le jeu graphiquement plus joli.
-- Permettre la sauvegarde de plusieurs parties.
+- Add some images and textures to make more beautiful the game.
+- Add the possibility to save more that one game and to choose a precise one.
